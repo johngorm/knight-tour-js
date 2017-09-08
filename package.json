@@ -1,0 +1,23 @@
+{
+  "name": "knight-tour",
+  "version": "1.0.0",
+  "description": "Run a knight's tour",
+  "main": "knight_tour.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johngorm/knight-tour-js.git"
+  },
+  "author": "John Gorman",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/johngorm/knight-tour-js/issues"
+  },
+  "homepage": "https://github.com/johngorm/knight-tour-js#readme",
+  "dependencies": {
+    "inquirer": "^3.2.3",
+    "mocha": "^3.5.0"
+  }
+}

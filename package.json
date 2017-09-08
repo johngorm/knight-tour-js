@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/johngorm/knight-tour-js#readme",
   "dependencies": {
+    "chai": "^4.1.2",
     "inquirer": "^3.2.3",
     "mocha": "^3.5.0"
   }

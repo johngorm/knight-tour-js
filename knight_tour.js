@@ -1,8 +1,8 @@
 #! /usr/local/bin/node
 //initialize the heuristic of each space on the board
 // const inquirer = require('inquirer');
-
-let board_heur = [
+const knight = module.exports = {};
+    knight.board_heur = [
     [2,3,4,4,4,4,3,2],
     [3,4,6,6,6,6,4,3],
     [4,6,8,8,8,8,6,4],
@@ -25,22 +25,43 @@ let board = [
 ];
 
 //Initialize Knight object at the upper left hand of board
-let Knight = {
+knight.Knight = {
     col_pos: 0,
     row_pos: 0,
-    moves: []
+    moves: [],
+    moveKnight: function(move_num){
+        this.col_pos += col_move[move_num];
+        this.row_pos += row_move[move_num];
+        return;
+    }
 }
 
 /*Specify the different in row and col for each possible knight move
  * The movement goes clockwise as you move through the arrays. 
  * (i.e. The first index move would draw an upside down L on the board.
  *    the next index would be that upside down L rotated 90 deg to the right, etc.)
+ *          _ _ _ _ _ _ _ _ _ _
+ *         |      |     |      |
+ *         |   7  |     |   0  |
+ *   _ _ _ |_ _ _ |_ _ _|_ _ _ |_ _ _
+ *  |      |      |     |      |      |
+ *  |   6  |      |     |      |   1  |
+ *  |_ _ _ |_ _ _ |_ _ _|_ _ _ |_ _ _ |
+ *  |      |      |     |      |      |
+ *  |      |      |  K  |      |      |
+ *  |_ _ _ |_ _ _ |_ _ _|_ _ _ |_ _ _ |
+ *  |      |      |     |      |      |
+ *  |   5  |      |     |      |   2  |
+ *  |_ _ _ |_ _ _ |_ _ _|_ _ _ |_ _ _ |
+ *         |      |     |      |
+ *         |   4  |     |   3  |
+ *         |_ _ _ |_ _ _|_ _ _ |
  *
-*/  
+ */
 const col_move = [1,2,2,1,-1,-2,-2,-1];
 const row_move = [-2,-1,1,2,2,1,-1,-2];
 
-function displayBoardHeur(){
+knight.displayBoardHeur = () =>{
     let board_out = '';
     for( var ii = 0; ii < 8; ii++){
         board_out += board_heur[ii].toString() + "\n";
@@ -48,7 +69,7 @@ function displayBoardHeur(){
     console.log(board_out);
 }
 
-function displayBoard(){
+knight.displayBoard = () =>{
     let board_out = '';
     for( var ii = 0; ii < 8; ii++){
         board_out += board[ii].toString() + "\n";
@@ -56,12 +77,15 @@ function displayBoard(){
     console.log(board_out);
 }
 
-function calculateHeuristic(row, col){
-    let possible_moves = findPossibleMoves(row,col);
-    console.log(possible_moves);
+knight.calculateHeuristic = (row, col) =>{
+    let possible_moves = knight.findPossibleMoves(row,col);
+    possible_moves.forEach((elem) => {
+        console.log(elem);
+    })
+    
 }
 
-function findPossibleMoves(row, col){
+knight.findPossibleMoves = (row, col) =>{
     let new_row, col_row;
     let possible_moves = [];
     for( var ii = 0; ii < 8; ii++){
@@ -78,6 +102,19 @@ function findPossibleMoves(row, col){
         }
     }
     return possible_moves;
+    
+}
+
+knight.updateHeuristics = (prev_row, prev_col, move_list, board_heur) =>{
+    /*After the knight is moved, each previously possible moves heuristic is reduced by 1*/
+    move_list.forEach((move) =>{
+        let col = prev_col + col_move[move];
+        let row = prev_row + row_move[move];
+        board_heur[row][col]--;
+    })
+
+    return null;
+
 }
 if(process.argv.length < 4){
     console.log('enter row and col in terminal');
@@ -85,5 +122,5 @@ if(process.argv.length < 4){
 }
 let row = parseInt(process.argv[2]);
 let col = parseInt(process.argv[3]);
-calculateHeuristic(row,col);
+knight.calculateHeuristic(row,col);
 

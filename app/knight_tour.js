@@ -1,8 +1,8 @@
 #! /usr/local/bin/node
 //initialize the heuristic of each space on the board
-// const inquirer = require('inquirer');
+const inquirer = require('inquirer');
 const knight = module.exports = {};
-    knight.board_heur = [
+knight.board_heur = [
     [2,3,4,4,4,4,3,2],
     [3,4,6,6,6,6,4,3],
     [4,6,8,8,8,8,6,4],
@@ -61,28 +61,19 @@ knight.Knight = {
 const col_move = [1,2,2,1,-1,-2,-2,-1];
 const row_move = [-2,-1,1,2,2,1,-1,-2];
 
-knight.displayBoardHeur = () =>{
-    let board_out = '';
-    for( var ii = 0; ii < 8; ii++){
-        board_out += board_heur[ii].toString() + "\n";
-    }
-    console.log(board_out);
-}
+
 
 knight.displayBoard = () =>{
     let board_out = '';
     for( var ii = 0; ii < 8; ii++){
         board_out += board[ii].toString() + "\n";
     }
-    console.log(board_out);
+    
+    return board_out;
 }
 
 knight.calculateHeuristic = (row, col) =>{
-    let possible_moves = knight.findPossibleMoves(row,col);
-    possible_moves.forEach((elem) => {
-        console.log(elem);
-    })
-    
+    return knight.findPossibleMoves(row,col).length;
 }
 
 knight.findPossibleMoves = (row, col) =>{
@@ -116,11 +107,30 @@ knight.updateHeuristics = (prev_row, prev_col, move_list, board_heur) =>{
     return null;
 
 }
-if(process.argv.length < 4){
-    console.log('enter row and col in terminal');
-    return -1;
+
+
+// if(process.argv.length < 4){
+//     console.log('enter row and col in terminal');
+//     return -1;
+// }
+// let row = parseInt(process.argv[2]);
+// let col = parseInt(process.argv[3]);s
+// knight.calculateHeuristic(row,col);
+
+console.log(board);
+let move_set = knight.findPossibleMoves(knight.Knight.row_pos, knight.Knight.col_pos)
+for(i = 0; i < move_set.length; i++){
+    move_set[i] = move_set[i].toString();
 }
-let row = parseInt(process.argv[2]);
-let col = parseInt(process.argv[3]);
-knight.calculateHeuristic(row,col);
+console.log(move_set);
+inquirer.prompt([{
+    name: 'move',
+    type:"list",
+    message: 'Select destination square',
+    choices: move_set
+}]).then(function(answer){
+    console.log("You chose " + answer.move);
+}).catch(function(error){
+    console.error(error);
+});
 

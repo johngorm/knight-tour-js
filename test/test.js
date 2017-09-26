@@ -1,5 +1,14 @@
+require('blanket');
 const assert = require('chai').assert;
-const knight = require('../knight_tour.js');
+const knight = require('../app/knight_tour.js');
+
+describe('Game Board', function(){
+    describe('#Display function', function(){
+        it('should return the board as a string formatted into 8x8', function(){
+            assert(knight.displayBoard());
+        });
+    });
+});
 
 describe('Heuristic Board', function(){
     describe('#top left corner moves', function(){

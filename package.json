@@ -4,7 +4,7 @@
   "description": "Run a knight's tour",
   "main": "knight_tour.js",
   "scripts": {
-    "test": "mocha"
+    "test": "nyc mocha"
   },
   "repository": {
     "type": "git",
@@ -17,10 +17,23 @@
   },
   "homepage": "https://github.com/johngorm/knight-tour-js#readme",
   "dependencies": {
-    "inquirer": "^3.2.3"
+    "blanket": "^1.2.3",
+    "inquirer": "^3.3.0"
   },
   "devDependencies": {
     "chai": "^4.1.2",
-    "mocha": "^3.5.3"
+    "mocha": "^3.5.3",
+    "nyc": "^11.2.1"
+  },
+  "config": {
+    "blanket": {
+      "pattern": [
+        "app"
+      ],
+      "data-cover-never": [
+        "node_modules",
+        "test"
+      ]
+    }
   }
 }

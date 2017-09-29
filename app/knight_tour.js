@@ -14,14 +14,14 @@ knight.board_heur = [
 ];
 
 let board = [
-    ['K','0','0','0','0','0','0','0'],
-    ['0','0','0','0','0','0','0','0'],
-    ['0','0','0','0','0','0','0','0'],
-    ['0','0','0','0','0','0','0','0'],
-    ['0','0','0','0','0','0','0','0'],
-    ['0','0','0','0','0','0','0','0'],
-    ['0','0','0','0','0','0','0','0'],
-    ['0','0','0','0','0','0','0','0']
+    ['K','.','.','.','.','.','.','.'],
+    ['.','.','.','.','.','.','.','.'],
+    ['.','.','.','.','.','.','.','.'],
+    ['.','.','.','.','.','.','.','.'],
+    ['.','.','.','.','.','.','.','.'],
+    ['.','.','.','.','.','.','.','.'],
+    ['.','.','.','.','.','.','.','.'],
+    ['.','.','.','.','.','.','.','.']
 ];
 
 //Initialize Knight object at the upper left hand of board
@@ -30,8 +30,11 @@ knight.Knight = {
     row_pos: 0,
     moves: [],
     moveKnight: function(move_num){
+        board[this.row_pos][this.col_pos] = 'X';
+        knight.board_heur[this.row_pos][this.col_pos] = null;
         this.col_pos += col_move[move_num];
         this.row_pos += row_move[move_num];
+        board[this.row_pos][this.col_pos] = 'K';
         return;
     }
 }
@@ -85,7 +88,7 @@ knight.findPossibleMoves = (row, col) =>{
         if( new_row < 0 || new_row > 7 || new_col < 0 || new_col > 7){
             continue;
         }
-        else if(board[new_row][new_col] !== '0'){
+        else if(board[new_row][new_col] !== '.'){
             continue;
         }
         else{
@@ -101,13 +104,14 @@ knight.updateHeuristics = (prev_row, prev_col, move_list, board_heur) =>{
     move_list.forEach((move) =>{
         let col = prev_col + col_move[move];
         let row = prev_row + row_move[move];
-        board_heur[row][col]--;
+        if(board_heur[row][col]){
+            board_heur[row][col]--;
+        }
     })
 
     return null;
 
 }
-
 
 // if(process.argv.length < 4){
 //     console.log('enter row and col in terminal');
@@ -117,20 +121,45 @@ knight.updateHeuristics = (prev_row, prev_col, move_list, board_heur) =>{
 // let col = parseInt(process.argv[3]);s
 // knight.calculateHeuristic(row,col);
 
-console.log(board);
-let move_set = knight.findPossibleMoves(knight.Knight.row_pos, knight.Knight.col_pos)
-for(i = 0; i < move_set.length; i++){
-    move_set[i] = move_set[i].toString();
+ checkUserMoves = () =>{
+    return knight.findPossibleMoves(knight.Knight.row_pos, knight.Knight.col_pos)
 }
-console.log(move_set);
-inquirer.prompt([{
-    name: 'move',
-    type:"list",
-    message: 'Select destination square',
-    choices: move_set
-}]).then(function(answer){
-    console.log("You chose " + answer.move);
-}).catch(function(error){
-    console.error(error);
-});
+
+
+ queryUserMove = () =>{
+ let move_set = checkUserMoves();
+    if(move_set.length !== 0){
+        for(i = 0; i < move_set.length; i++){
+            move_set[i] = move_set[i].toString();
+        }
+        inquirer.prompt([{
+            name: 'move',
+            type:"list",
+            message: 'Select destination square',
+            choices: move_set
+        }]).then(function(answer){
+            console.log("You chose " + answer.move);
+            move_set.splice(move_set.indexOf(answer.move), 1);
+            knight.updateHeuristics(knight.Knight.row_pos, knight.Knight.col_pos, move_set, knight.board_heur);
+            knight.Knight.moveKnight(answer.move);
+            console.log(knight.displayBoard());
+            console.log(knight.board_heur)
+            queryUserMove();
+            return;
+        }).catch(function(error){
+            console.error(error);
+            return -1;
+        });
+    }
+    else {
+        console.log('No more moves available');
+        process.exit();
+    }
+ };
+
+ console.log(knight.displayBoard())
+ console.log(knight.board_heur)
+ queryUserMove();
+
+
 

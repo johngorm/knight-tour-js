@@ -63,6 +63,16 @@ knight.Knight = {
  */
 const col_move = [1,2,2,1,-1,-2,-2,-1];
 const row_move = [-2,-1,1,2,2,1,-1,-2];
+const moves = [
+    [-2,1],
+    [-1,2],
+    [1,2],
+    [2,1],
+    [2,-1],
+    [1,-2],
+    [-1,-2],
+    [-2,-1]
+]
 
 
 
@@ -83,8 +93,8 @@ knight.findPossibleMoves = (row, col) =>{
     let new_row, col_row;
     let possible_moves = [];
     for( var ii = 0; ii < 8; ii++){
-        new_row = row + row_move[ii];
-        new_col = col + col_move[ii];
+        new_row = row + moves[ii][0];
+        new_col = col + moves[ii][1];
         if( new_row < 0 || new_row > 7 || new_col < 0 || new_col > 7){
             continue;
         }
@@ -141,29 +151,31 @@ knight.checkUserMoves = () =>{
  knight.queryUserMove = () =>{
  let move_set = knight.checkUserMoves();
  let tile_set = [];
+ let cypher = {};
     if(move_set.length !== 0){
         
         for(i = 0; i < move_set.length; i++){
             //Find every possible move for the current position and translate it into its chess tile letter and number
             let [temp_row, temp_col] = [knight.Knight.row_pos + row_move[move_set[i]], knight.Knight.col_pos + col_move[move_set[i]]];
             let temp_tile = knight.convertRowColToTileName(temp_row, temp_col);
-            tile_set[i] = {temp_tile : move_set[i].toString()};
-        
+            tile_set[i] =  temp_tile;
+            cypher[temp_tile] = move_set[i];
         }
         
         inquirer.prompt([{
             name: 'move',
             type:"list",
             message: 'Select destination square',
-            choices: Object.keys(tile_set)
+            choices: tile_set
         }]).then(function(answer){
             console.log("You chose " + answer.move);
-            move_set.splice(move_set.indexOf(answer.move), 1);
+            let decrypt_move = cypher[answer.move];
+            move_set.splice(move_set.indexOf(decrypt_move), 1);
             knight.updateHeuristics(knight.Knight.row_pos, knight.Knight.col_pos, move_set, knight.board_heur);
-            knight.Knight.moveKnight(answer.move);
+            knight.Knight.moveKnight(decrypt_move);
             console.log(knight.displayBoard());
             console.log("Knight now at " + knight.convertRowColToTileName(knight.Knight.row_pos, knight.Knight.col_pos))
-            queryUserMove();
+            knight.queryUserMove();
             return;
         }).catch(function(error){
             console.error(error);

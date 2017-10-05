@@ -8,6 +8,29 @@ describe('Game Board', function(){
             assert(knight.displayBoard());
         });
     });
+
+    describe('#translate row and col to tile name', function(){
+        let row = 0;
+        let col =0;
+        it('should output a string of a letter and a number', function(){
+            let x = knight.convertRowColToTileName(row, col);
+            assert.equal(x.length, 2, 'Move string should be 2 characters in length');
+            assert.equal(x, 'a8',  'inital tile should be in the "a" column and the 8th row ');
+            
+        });
+    });
+    describe('#translate tile name to row and col' , function(){
+        let tile = 'h1';
+        it('should output an array of the row and col', function(){
+            assert(knight.convertTileToRowCol(tile));
+        })
+        it('should return a col value of 7', function(){
+            assert.equal(knight.convertTileToRowCol(tile)[1], 7);
+        });
+        it('should return a row value of 7', function(){
+            assert.equal(knight.convertTileToRowCol(tile)[0], 7);
+        })
+    })
 });
 
 describe('Heuristic Board', function(){
@@ -23,7 +46,6 @@ describe('Heuristic Board', function(){
             };
         });
     });
-
     describe('#left border space moves', function(){
         it('should return an array', function(){
            let moves = knight.findPossibleMoves(4,0);

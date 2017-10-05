@@ -113,6 +113,18 @@ knight.updateHeuristics = (prev_row, prev_col, move_list, board_heur) =>{
 
 }
 
+knight.convertRowColToTileName = (row_num, row_col)=> {
+    const col_letters = ['a','b','c','d','e','f','g','h'];
+    let tile =  col_letters[row_col] + (8 - row_num);
+    return tile;
+}
+
+knight.convertTileToRowCol = (tile) =>{
+    const col_letters = ['a','b', 'c', 'd','e' ,'f','g', 'h'];
+    let col_letter = col_letters.indexOf(tile[0]);
+    let row = 8 - parseInt(tile[1]);
+    return [row, col_letter];
+}
 // if(process.argv.length < 4){
 //     console.log('enter row and col in terminal');
 //     return -1;
@@ -121,29 +133,36 @@ knight.updateHeuristics = (prev_row, prev_col, move_list, board_heur) =>{
 // let col = parseInt(process.argv[3]);s
 // knight.calculateHeuristic(row,col);
 
- checkUserMoves = () =>{
+knight.checkUserMoves = () =>{
     return knight.findPossibleMoves(knight.Knight.row_pos, knight.Knight.col_pos)
 }
 
 
- queryUserMove = () =>{
- let move_set = checkUserMoves();
+ knight.queryUserMove = () =>{
+ let move_set = knight.checkUserMoves();
+ let tile_set = [];
     if(move_set.length !== 0){
+        
         for(i = 0; i < move_set.length; i++){
-            move_set[i] = move_set[i].toString();
+            //Find every possible move for the current position and translate it into its chess tile letter and number
+            let [temp_row, temp_col] = [knight.Knight.row_pos + row_move[move_set[i]], knight.Knight.col_pos + col_move[move_set[i]]];
+            let temp_tile = knight.convertRowColToTileName(temp_row, temp_col);
+            tile_set[i] = {temp_tile : move_set[i].toString()};
+        
         }
+        
         inquirer.prompt([{
             name: 'move',
             type:"list",
             message: 'Select destination square',
-            choices: move_set
+            choices: Object.keys(tile_set)
         }]).then(function(answer){
             console.log("You chose " + answer.move);
             move_set.splice(move_set.indexOf(answer.move), 1);
             knight.updateHeuristics(knight.Knight.row_pos, knight.Knight.col_pos, move_set, knight.board_heur);
             knight.Knight.moveKnight(answer.move);
             console.log(knight.displayBoard());
-            console.log(knight.board_heur)
+            console.log("Knight now at " + knight.convertRowColToTileName(knight.Knight.row_pos, knight.Knight.col_pos))
             queryUserMove();
             return;
         }).catch(function(error){
@@ -153,13 +172,13 @@ knight.updateHeuristics = (prev_row, prev_col, move_list, board_heur) =>{
     }
     else {
         console.log('No more moves available');
+        return -1;
         process.exit();
     }
  };
 
  console.log(knight.displayBoard())
- console.log(knight.board_heur)
- queryUserMove();
+ knight.queryUserMove();
 
 
 
